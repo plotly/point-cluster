@@ -2,6 +2,13 @@
 
 Point clustering for 2D spatial indexing. Incorporates optimized quad-tree data structure.
 
+<div align="center">
+  <a href="https://dash.plotly.com/project-maintenance">
+    <img src="https://dash.plotly.com/assets/images/maintained-by-plotly.png" width="400px" alt="Maintained by Plotly">
+  </a>
+</div>
+
+
 <!--
 * [ ] quad-tree, kd-tree, ann-tree and other tree types.
 * [x] splatting by zoom layers.
