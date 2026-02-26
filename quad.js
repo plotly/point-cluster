@@ -292,13 +292,13 @@ function partition(ids, points, offset, pivot) {
 	let next = ids[0]
 	let nextLo = 1
 	let nextHi = ids.length - 1
-	while (nextLo < nextHi) {
+	while (nextLo <= nextHi) {
 		if (points[next * 2 + offset] < pivot) {
 			let x = ids[nextLo]
 			ids[nextLo++] = next
 			next = x
 		} else {
-			let x = ids[nextLo]
+			let x = ids[nextHi]
 			ids[nextHi--] = next
 			next = x
 		}
@@ -307,11 +307,13 @@ function partition(ids, points, offset, pivot) {
 	if (next < pivot) {
 		ids[0] = next;
 	} else if (nextLo > 0) {
-		ids[0] = ids[nextLo - 1];
+		ids[0] = ids[nextHi];
 		ids[nextHi] = next;
+		nextHi--;
+		nextLo--;
 	}
 
 	let los = ids.subarray(0, nextLo)
-	let his = ids.subarray(nextHi + 1, ids.length)
+	let his = ids.subarray(nextLo, ids.length)
 	return [los, his]
 }
