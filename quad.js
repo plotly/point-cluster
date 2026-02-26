@@ -304,7 +304,7 @@ function partition(ids, points, offset, pivot) {
 		}
 	}
 
-	if (next < cx) {
+	if (next < pivot) {
 		ids[0] = next;
 	} else if (nextLo > 0) {
 		ids[0] = ids[nextLo - 1];
