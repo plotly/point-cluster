@@ -93,10 +93,11 @@ module.exports = function cluster (srcPoints, options) {
 
 	return ids
 
-
-
-	// FIXME: it is possible to create one typed array heap and reuse that to avoid memory blow
 	function sort (x, y, diam, ids, level, group) {
+		return sortInner(x, y, diam, new Float64Array(ids), level, group)
+	}
+
+	function sortInner(x, y, diam, ids, level, group) {
 		if (!ids.length) return null
 
 		// save first point as level representative
@@ -132,22 +133,17 @@ module.exports = function cluster (srcPoints, options) {
 		let cx = x + d2, cy = y + d2
 
 		// distribute points by 4 buckets
-		let lolo = [], lohi = [], hilo = [], hihi = []
-
-		for (let i = 1, l = ids.length; i < l; i++) {
-			let idx = ids[i],
-				x = points[idx * 2],
-				y = points[idx * 2 + 1]
-			x < cx ? (y < cy ? lolo.push(idx) : lohi.push(idx)) : (y < cy ? hilo.push(idx) : hihi.push(idx))
-		}
+		const [lo, hi] = partition(ids.subarray(1), points, 0, cx) // partition by x
+		const [lolo, lohi] = partition(lo, points, 1, cy)          // then partition los and his by y
+		const [hilo, hihi] = partition(hi, points, 1, cy)
 
 		group <<= 2
 
 		sublevel.push(
-			sort(x, y, d2, lolo, level, group),
-			sort(x, cy, d2, lohi, level, group + 1),
-			sort(cx, y, d2, hilo, level, group + 2),
-			sort(cx, cy, d2, hihi, level, group + 3)
+			sortInner(x, y, d2, lolo, level, group),
+			sortInner(x, cy, d2, lohi, level, group + 1),
+			sortInner(cx, y, d2, hilo, level, group + 2),
+			sortInner(cx, cy, d2, hihi, level, group + 3)
 		)
 
 		return offset
@@ -283,4 +279,39 @@ function normalize (pts, bounds) {
 	}
 
 	return result
+}
+
+// Partitions ids in place into two subarrays,
+// one where the ids reference points which have values below the pivot,
+// and one where those values are >= the pivot.
+function partition(ids, points, offset, pivot) {
+	if (ids.length === 0) {
+		return [ids.subarray(0, 0), ids.subarray(0, 0)]
+	}
+
+	let next = ids[0]
+	let nextLo = 1
+	let nextHi = ids.length - 1
+	while (nextLo < nextHi) {
+		if (points[next * 2 + offset] < pivot) {
+			let x = ids[nextLo]
+			ids[nextLo++] = next
+			next = x
+		} else {
+			let x = ids[nextLo]
+			ids[nextHi--] = next
+			next = x
+		}
+	}
+
+	if (next < cx) {
+		ids[0] = next;
+	} else if (nextLo > 0) {
+		ids[0] = ids[nextLo - 1];
+		ids[nextHi] = next;
+	}
+
+	let los = ids.subarray(0, nextLo)
+	let his = ids.subarray(nextHi + 1, ids.length)
+	return [los, his]
 }
