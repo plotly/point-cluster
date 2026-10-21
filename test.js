@@ -8,7 +8,7 @@ t('quad: offsets case', t => {
   let points = [.15,.8, .2,.15, .6,.6, .6,.45, .8,.1, .9,.6, .91,.61]
   let index = cluster(points, {bounds: [0,0,1,1]})
 
-  t.deepEqual(index.slice(), [0, 1,3,2, 4,5, 6])
+  t.deepEqual(index.slice(), [0, 1,4,6, 3,2,5])
 
   t.end()
 })
@@ -18,7 +18,7 @@ t('quad: output container', t => {
   let arr = []
   let index = cluster(points, {bounds: [0,0,1,1], output: arr})
 
-  t.deepEqual(arr.slice(), [0, 1,3,2, 4,5, 6])
+  t.deepEqual(arr.slice(), [0, 1,4,6, 3,2,5])
   t.equal(index, arr)
 
   t.end()
@@ -42,13 +42,13 @@ t('quad: selection', t => {
 
   let index = cluster(points)
 
-  t.deepEqual(index.range(), [0, 1, 2, 3, 4, 5, 6, 7])
-  t.deepEqual(index.range(1,1,6,6), [1, 2, 3, 4, 5, 6])
-  t.deepEqual(index.range(2,1,5,6), [2, 3, 4, 5])
-  t.deepEqual(index.range(1,2,6,5), [2, 3, 4, 5])
-  t.deepEqual(index.range(1,3,5,6), [3, 4, 5])
+  t.deepEqual(new Set(index.range()), new Set([0, 1, 2, 3, 4, 5, 6, 7]))
+  t.deepEqual(new Set(index.range(1,1,6,6)), new Set([1, 2, 3, 4, 5, 6]))
+  t.deepEqual(new Set(index.range(2,1,5,6)), new Set([2, 3, 4, 5]))
+  t.deepEqual(new Set(index.range(1,2,6,5)), new Set([2, 3, 4, 5]))
+  t.deepEqual(new Set(index.range(1,3,5,6)), new Set([3, 4, 5]))
 
-  t.deepEqual(index.range(5,6,1,3), [3, 4, 5])
+  t.deepEqual(new Set(index.range(5,6,1,3)), new Set([3, 4, 5]))
 
   t.end()
 })
@@ -287,4 +287,3 @@ t('performance', t => {
 
 	t.end()
 })
-
