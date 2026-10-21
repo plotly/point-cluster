@@ -6,13 +6,11 @@
 
 'use strict'
 
-const clamp = require('clamp')
 const rect = require('parse-rect')
 const getBounds = require('array-bounds')
 const pick = require('pick-by-alias')
 const defined = require('defined')
 const flatten = require('flatten-vertex-data')
-const isObj = require('is-obj')
 const dtype = require('dtype')
 const log2 = require('math-log2')
 
@@ -269,6 +267,16 @@ module.exports = function cluster (srcPoints, options) {
 	}
 }
 
+
+function isObj(value) {
+	return value && typeof value === 'object'
+}
+
+function clamp(value, min, max) {
+	return min < max
+		? (value < min ? min : value > max ? max : value)
+		: (value < max ? max : value > min ? min : value)
+}
 
 // normalize points by bounds
 function normalize (pts, bounds) {

@@ -41,11 +41,9 @@
   "license": "MIT",
   "dependencies": {
     "array-bounds": "^1.0.1",
-    "clamp": "^1.0.1",
     "defined": "^1.0.0",
     "dtype": "^2.0.0",
     "flatten-vertex-data": "^1.0.2",
-    "is-obj": "^1.0.1",
     "math-log2": "^1.0.1",
     "parse-rect": "^1.2.0",
     "pick-by-alias": "^1.2.0"
